@@ -2,13 +2,10 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-
 // ----  MAIN  ---- //
 void main() {
-  runApp(MyApp());  // tells Flutter to run the app defined in MyApp
+  runApp(MyApp()); // tells Flutter to run the app defined in MyApp
 }
-
 
 // ----  MyApp WIDGET  ---- //
 // Widgets are the elements from which you build every Flutter app.
@@ -18,7 +15,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     // The state is created and provided to the whole app using a ChangeNotifierProvider.
     // This allows any widget in the app to get hold of the state.
     return ChangeNotifierProvider(
@@ -33,7 +29,6 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-
 }
 
 // ----  MyAppState STATE CLASS  ---- //
@@ -42,28 +37,28 @@ class MyApp extends StatelessWidget {
 // The state class extends ChangeNotifier, which means that it can notify others about its own changes.
 // For example, if the current word pair changes, some widgets in the app need to know.
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();  // current random word pair
+  var current = WordPair.random(); // current random word pair
   void getNext() {
     current = WordPair.random();
-    notifyListeners();  // a method of ChangeNotifier that ensures that anyone watching MyAppState is notified
+    notifyListeners(); // a method of ChangeNotifier that ensures that anyone watching MyAppState is notified
   }
 }
 
-
 class MyHomePage extends StatelessWidget {
-
   // Every widget defines a build() method that's automatically called
   // every time the widget's circumstances change so that the widget is always up to date.
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<
+        MyAppState>(); // MyHomePage tracks changes to the app's current state using the watch method
+    var pair = appState.current; // actual data needed by new text widget !!!
 
-    var appState = context.watch<MyAppState>(); // MyHomePage tracks changes to the app's current state using the watch method
-    var pair = appState.current;  // actual data needed by new text widget !!!
-
-    return Scaffold(  // Every build method must return a widget or (more typically) a nested tree of widgets
+    return Scaffold(
+      // Every build method must return a widget or (more typically) a nested tree of widgets
       body: Column(
         children: [
-          Text('\nThis is the new home page. \nPress the button to generate a random word!\n'),
+          Text(
+              '\nThis is the new home page. \nPress the button to generate a random word!\n'),
           BigCard(pair: pair),
           ElevatedButton(
               onPressed: () {
@@ -75,7 +70,6 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-
 
 // Having separate widgets for separate logical parts of your UI is an important way
 // of managing complexity in Flutter
@@ -105,25 +99,20 @@ class BigCard extends StatelessWidget {
       color: theme.colorScheme.onPrimary,
     );
 
-    return Card(  // parent widget
+    return Card(
+      // parent widget
       elevation: 15.0,
       color: theme.colorScheme.primary,
-      child: Padding( // Composition over Inheritance (padding is not an attribute in this case)
+      child: Padding(
+        // Composition over Inheritance (padding is not an attribute in this case)
         padding: const EdgeInsets.all(20.0),
         // child: Text(pair.asLowerCase, style: TextStyle(color: Colors.primaries[Random().nextInt(Colors.primaries.length)],),),
-        child: Text("${pair.first} ${pair.second}", style: style),
+        child: Text(
+          pair.asLowerCase,
+          style: style,
+          semanticsLabel: "${pair.first} ${pair.second}",
+        ),
       ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
