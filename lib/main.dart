@@ -2,6 +2,8 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
+
 // ----  MAIN  ---- //
 void main() {
   runApp(MyApp());  // tells Flutter to run the app defined in MyApp
@@ -87,21 +89,33 @@ class BigCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    // Random color generation
+    // var generatedColor = Random().nextInt(Colors.primaries.length);
+    // Colors.primaries[generatedColor];
+
+    // Text style setting
+    // theme.textTheme --> access the app's font theme
+    // members such as bodyMedium (for standard text of medium size), caption (for captions of images), or headlineLarge (for large headlines)
+    // displayMedium property is a large style meant for display text.
+    // The word display is used in the typographic sense here, such as in display typeface.
+    // The documentation for displayMedium says that "display styles are reserved for short, important text"
+    // copyWith() called on displayMedium returns a copy of the text style with the changes you define (changing the text's color)
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+    );
+
     return Card(  // parent widget
+      elevation: 15.0,
+      color: theme.colorScheme.primary,
       child: Padding( // Composition over Inheritance (padding is not an attribute in this case)
-        padding: const EdgeInsets.all(16.0),
-        child: Text(pair.asLowerCase),
+        padding: const EdgeInsets.all(20.0),
+        // child: Text(pair.asLowerCase, style: TextStyle(color: Colors.primaries[Random().nextInt(Colors.primaries.length)],),),
+        child: Text(pair.asLowerCase, style: style),
       ),
     );
   }
 }
-
-
-
-
-
-
-
 
 
 
