@@ -111,7 +111,7 @@ class BigCard extends StatelessWidget {
       child: Padding( // Composition over Inheritance (padding is not an attribute in this case)
         padding: const EdgeInsets.all(20.0),
         // child: Text(pair.asLowerCase, style: TextStyle(color: Colors.primaries[Random().nextInt(Colors.primaries.length)],),),
-        child: Text(pair.asLowerCase, style: style),
+        child: Text("${pair.first} ${pair.second}", style: style),
       ),
     );
   }
