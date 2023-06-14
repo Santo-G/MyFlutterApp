@@ -56,12 +56,13 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     var appState = context.watch<MyAppState>(); // MyHomePage tracks changes to the app's current state using the watch method
+    var pair = appState.current;  // actual data needed by new text widget !!!
 
     return Scaffold(  // Every build method must return a widget or (more typically) a nested tree of widgets
       body: Column(
         children: [
           Text('\nThis is the new home page. \nPress the button to generate a random word!\n'),
-          Text(appState.current.asLowerCase),
+          BigCard(pair: pair),
           ElevatedButton(
               onPressed: () {
                 appState.getNext();
@@ -72,3 +73,38 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
+
+
+// Having separate widgets for separate logical parts of your UI is an important way
+// of managing complexity in Flutter
+class BigCard extends StatelessWidget {
+  const BigCard({
+    super.key,
+    required this.pair,
+  });
+
+  final WordPair pair;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(pair.asLowerCase);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
