@@ -108,9 +108,8 @@ class BigCard extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         // child: Text(pair.asLowerCase, style: TextStyle(color: Colors.primaries[Random().nextInt(Colors.primaries.length)],),),
         child: Text(
-          pair.asLowerCase,
+          "${pair.first} ${pair.second}",
           style: style,
-          semanticsLabel: "${pair.first} ${pair.second}",
         ),
       ),
     );
