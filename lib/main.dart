@@ -56,9 +56,56 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {   // StatefulWidget contains a mutable state of his own (it can change itself)
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {  // this class can manage its own values (underscore (_) at the start of _MyHomePageState makes that class private)
+
+  var selectedIndex = 0;
+
   // Every widget defines a build() method that's automatically called
-  // every time the widget's circumstances change so that the widget is always up to date.
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          SafeArea(   // ensures that its child is not obscured by a hardware notch or a status bar
+            child: NavigationRail(
+              extended: false,  // shows the labels next to the icons
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.home),
+                  label: Text('Home'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.favorite),
+                  label: Text('Favorites'),
+                ),
+              ],
+              selectedIndex: selectedIndex,   // default destination index selected at startup
+              onDestinationSelected: (value) {    // defines what happens when the user selects one of the destinations (similar to notifyListeners()-  makes sure that the UI updates)
+                setState(() {
+                  selectedIndex = value;
+                });
+              },
+            ),
+          ),
+          Expanded(   // useful in rows and columns—they let you express layouts where some children take only as much space as they need
+            child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: GeneratorPage(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class GeneratorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>(); // MyHomePage tracks changes to the app's current state using the watch method
@@ -71,39 +118,38 @@ class MyHomePage extends StatelessWidget {
       icon = Icons.favorite_border;
     }
 
-    return Scaffold(
-      // Every build method must return a widget or (more typically) a nested tree of widgets
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            BigCard(pair: pair),
-            SizedBox(height: 10),   // takes space and doesn't render anything by itself. It's commonly used to create visual "gaps"
-            Row(
-              mainAxisSize: MainAxisSize.min,   // tells Row not to take all available horizontal space
-              children: [
-                ElevatedButton.icon(
-                    onPressed: () {
-                      appState.toggleFavorite();
-                    },
-                    icon: Icon(icon),
-                    label: Text('Like')
-                ),
-                SizedBox(width: 18),
-                ElevatedButton(
-                    onPressed: () {
-                      appState.getNext();
-                    },
-                    child: Text('Next')
-                ),
-              ],
-            )
-          ],
-        ),
+    // Every build method must return a widget or (more typically) a nested tree of widgets
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BigCard(pair: pair),
+          SizedBox(height: 10),   // takes space and doesn't render anything by itself. It's commonly used to create visual "gaps"
+          Row(
+            mainAxisSize: MainAxisSize.min,   // tells Row not to take all available horizontal space
+            children: [
+              ElevatedButton.icon(
+                  onPressed: () {
+                    appState.toggleFavorite();
+                  },
+                  icon: Icon(icon),
+                  label: Text('Like')
+              ),
+              SizedBox(width: 18),
+              ElevatedButton(
+                  onPressed: () {
+                    appState.getNext();
+                  },
+                  child: Text('Next')
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
 }
+
 
 // Having separate widgets for separate logical parts of your UI is an important way
 // of managing complexity in Flutter
@@ -149,3 +195,5 @@ class BigCard extends StatelessWidget {
     );
   }
 }
+
+
