@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:app_settings/app_settings.dart';
 
 // ----  MAIN  ---- //
 void main() {
@@ -86,6 +87,9 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
         page = ApplePage();
         break;
       case 4:
+        page = SettingsPage();
+        break;
+      case 5:
         page = Placeholder(color: Colors.white,);   // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
         break;
       default:
@@ -116,6 +120,10 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
                     NavigationRailDestination(
                       icon: Icon(Icons.apple),
                       label: Text('Apple'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.settings),
+                      label: Text('Settings'),
                     ),
                   ],
                   selectedIndex: selectedIndex,   // default destination index selected at startup
@@ -266,7 +274,6 @@ class FavoritesPage extends StatelessWidget {
 
 
 class AndroidPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -277,11 +284,27 @@ class AndroidPage extends StatelessWidget {
 
 
 class ApplePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Image.asset('assets/animations/apple_animation.gif'),
+    );
+  }
+}
+
+
+class SettingsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+            onPressed: (() {
+              AppSettings.openBluetoothSettings(callback: () {
+                print("sample callback function called");
+              });
+            }),
+            child: Text('Open Bluetooth Settings'),
+          ),
     );
   }
 }
