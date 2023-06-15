@@ -55,17 +55,19 @@ class MyHomePage extends StatelessWidget {
 
     return Scaffold(
       // Every build method must return a widget or (more typically) a nested tree of widgets
-      body: Column(
-        children: [
-          Text(
-              '\nThis is the new home page. \nPress the button to generate a random word!\n'),
-          BigCard(pair: pair),
-          ElevatedButton(
-              onPressed: () {
-                appState.getNext();
-              },
-              child: Text('Next'))
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BigCard(pair: pair),
+            SizedBox(height: 10),   // takes space and doesn't render anything by itself. It's commonly used to create visual "gaps"
+            ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'))
+          ],
+        ),
       ),
     );
   }
