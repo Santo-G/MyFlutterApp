@@ -68,6 +68,19 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
   // Every widget defines a build() method that's automatically called
   @override
   Widget build(BuildContext context) {
+
+    Widget page;
+    switch (selectedIndex) {
+      case 0:
+        page = GeneratorPage();
+        break;
+      case 1:
+        page = Placeholder();   // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
+        break;
+      default:
+        throw UnimplementedError('no widget for $selectedIndex');   // throw an error (fail-fast principle)
+    }
+
     return Scaffold(
       body: Row(
         children: [
@@ -95,7 +108,8 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
           Expanded(   // useful in rows and columns—they let you express layouts where some children take only as much space as they need
             child: Container(
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: GeneratorPage(),
+              // child: GeneratorPage(),
+              child: page,
             ),
           ),
         ],
