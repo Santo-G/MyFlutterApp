@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:app_settings/app_settings.dart';
 
 // ----  MAIN  ---- //
 void main() {
@@ -56,10 +57,12 @@ class MyAppState extends ChangeNotifier {
   }
 }
 
+
 class MyHomePage extends StatefulWidget {   // StatefulWidget contains a mutable state of his own (it can change itself)
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
+
 
 class _MyHomePageState extends State<MyHomePage> {  // this class can manage its own values (underscore (_) at the start of _MyHomePageState makes that class private)
 
@@ -78,9 +81,15 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
         page = FavoritesPage();
         break;
       case 2:
-        page = Placeholder(color: Colors.greenAccent,);
+        page = AndroidPage();
         break;
       case 3:
+        page = ApplePage();
+        break;
+      case 4:
+        page = SettingsPage();
+        break;
+      case 5:
         page = Placeholder(color: Colors.white,);   // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
         break;
       default:
@@ -112,6 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
                       icon: Icon(Icons.apple),
                       label: Text('Apple'),
                     ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.settings),
+                      label: Text('Settings'),
+                    ),
                   ],
                   selectedIndex: selectedIndex,   // default destination index selected at startup
                   onDestinationSelected: (value) {    // defines what happens when the user selects one of the destinations (similar to notifyListeners()-  makes sure that the UI updates)
@@ -133,37 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
         );
       }
     );
-  }
-}
-
-
-class FavoritesPage extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context, ) {
-    var appState = context.watch<MyAppState>();
-    var pairList = appState.favorites;
-
-    Text text;
-    if (pairList.isEmpty) {
-      text = Text('You have ${appState.favorites.length} favorites:');
-    } else {
-      text = Text('Warning! Favorite list is empty !!!');
-    }
-
-    return ListView(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: text,
-          ),
-          for (var pair in appState.favorites)
-            ListTile(
-              leading: Icon(Icons.favorite),
-              title: Text(pair.asLowerCase),
-            ),
-        ],
-      );
   }
 }
 
@@ -255,6 +237,74 @@ class BigCard extends StatelessWidget {
           style: style,
         ),
       ),
+    );
+  }
+}
+
+
+class FavoritesPage extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context, ) {
+    var appState = context.watch<MyAppState>();
+    var pairList = appState.favorites;
+
+    Text text;
+    if (pairList.isEmpty) {
+      text = Text('You have ${appState.favorites.length} favorites:');
+    } else {
+      text = Text('Warning! Favorite list is empty !!!');
+    }
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: text,
+        ),
+        for (var pair in appState.favorites)
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text(pair.asLowerCase),
+          ),
+      ],
+    );
+  }
+}
+
+
+class AndroidPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Image.asset('assets/animations/android_animation.gif'),
+    );
+  }
+}
+
+
+class ApplePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Image.asset('assets/animations/apple_animation.gif'),
+    );
+  }
+}
+
+
+class SettingsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+            onPressed: (() {
+              AppSettings.openBluetoothSettings(callback: () {
+                print("sample callback function called");
+              });
+            }),
+            child: Text('Open Bluetooth Settings'),
+          ),
     );
   }
 }
