@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
         home: MyHomePage(), // home widget - starting point of the app !!!
       ),
@@ -78,56 +78,60 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
         page = Placeholder();   // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
         break;
       case 2:
-        page = Placeholder(color: Colors.white,);
+        page = Placeholder(color: Colors.greenAccent,);
         break;
       case 3:
-        page = Placeholder(color: Colors.greenAccent,);
+        page = Placeholder(color: Colors.white,);
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');   // throw an error (fail-fast principle)
     }
 
-    return Scaffold(
-      body: Row(
-        children: [
-          SafeArea(   // ensures that its child is not obscured by a hardware notch or a status bar
-            child: NavigationRail(
-              extended: false,  // shows the labels next to the icons
-              destinations: [
-                NavigationRailDestination(
-                  icon: Icon(Icons.home),
-                  label: Text('Home'),
+    return LayoutBuilder(
+      builder: (context, constraints) {   // builder callback is called every time the constraints change (resize, rotate etc)
+        return Scaffold(
+          body: Row(
+            children: [
+              SafeArea(   // ensures that its child is not obscured by a hardware notch or a status bar
+                child: NavigationRail(
+                  extended: constraints.maxWidth >= 600,  // shows the labels next to the icons - responds to its environment changes
+                  destinations: [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.home),
+                      label: Text('Home'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.favorite),
+                      label: Text('Favorites'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.android),
+                      label: Text('Android'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.apple),
+                      label: Text('Apple'),
+                    ),
+                  ],
+                  selectedIndex: selectedIndex,   // default destination index selected at startup
+                  onDestinationSelected: (value) {    // defines what happens when the user selects one of the destinations (similar to notifyListeners()-  makes sure that the UI updates)
+                    setState(() {
+                      selectedIndex = value;
+                    });
+                  },
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.favorite),
-                  label: Text('Favorites'),
+              ),
+              Expanded(   // useful in rows and columns—they let you express layouts where some children take only as much space as they need
+                child: Container(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  // child: GeneratorPage(),
+                  child: page,
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.android),
-                  label: Text('Android Page'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.apple),
-                  label: Text('Apple Page'),
-                ),
-              ],
-              selectedIndex: selectedIndex,   // default destination index selected at startup
-              onDestinationSelected: (value) {    // defines what happens when the user selects one of the destinations (similar to notifyListeners()-  makes sure that the UI updates)
-                setState(() {
-                  selectedIndex = value;
-                });
-              },
-            ),
+              ),
+            ],
           ),
-          Expanded(   // useful in rows and columns—they let you express layouts where some children take only as much space as they need
-            child: Container(
-              color: Theme.of(context).colorScheme.primaryContainer,
-              // child: GeneratorPage(),
-              child: page,
-            ),
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 }
