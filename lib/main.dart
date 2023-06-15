@@ -38,9 +38,21 @@ class MyApp extends StatelessWidget {
 // For example, if the current word pair changes, some widgets in the app need to know.
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random(); // current random word pair
+
   void getNext() {
     current = WordPair.random();
     notifyListeners(); // a method of ChangeNotifier that ensures that anyone watching MyAppState is notified
+  }
+
+  var favorites = <WordPair>[];   // empty list
+
+  void toggleFavorite() {
+    if (favorites.contains(current)) {
+      favorites.remove(current);
+    } else {
+      favorites.add(current);
+    }
+    notifyListeners();
   }
 }
 
@@ -49,9 +61,15 @@ class MyHomePage extends StatelessWidget {
   // every time the widget's circumstances change so that the widget is always up to date.
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<
-        MyAppState>(); // MyHomePage tracks changes to the app's current state using the watch method
+    var appState = context.watch<MyAppState>(); // MyHomePage tracks changes to the app's current state using the watch method
     var pair = appState.current; // actual data needed by new text widget !!!
+
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
 
     return Scaffold(
       // Every build method must return a widget or (more typically) a nested tree of widgets
@@ -61,11 +79,25 @@ class MyHomePage extends StatelessWidget {
           children: [
             BigCard(pair: pair),
             SizedBox(height: 10),   // takes space and doesn't render anything by itself. It's commonly used to create visual "gaps"
-            ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'))
+            Row(
+              mainAxisSize: MainAxisSize.min,   // tells Row not to take all available horizontal space
+              children: [
+                ElevatedButton.icon(
+                    onPressed: () {
+                      appState.toggleFavorite();
+                    },
+                    icon: Icon(icon),
+                    label: Text('Like')
+                ),
+                SizedBox(width: 18),
+                ElevatedButton(
+                    onPressed: () {
+                      appState.getNext();
+                    },
+                    child: Text('Next')
+                ),
+              ],
+            )
           ],
         ),
       ),
