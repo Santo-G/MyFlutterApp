@@ -77,6 +77,12 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
       case 1:
         page = Placeholder();   // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
         break;
+      case 2:
+        page = Placeholder(color: Colors.white,);
+        break;
+      case 3:
+        page = Placeholder(color: Colors.greenAccent,);
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');   // throw an error (fail-fast principle)
     }
@@ -95,6 +101,14 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
                 NavigationRailDestination(
                   icon: Icon(Icons.favorite),
                   label: Text('Favorites'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.android),
+                  label: Text('Android Page'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.apple),
+                  label: Text('Apple Page'),
                 ),
               ],
               selectedIndex: selectedIndex,   // default destination index selected at startup
