@@ -34,6 +34,7 @@ dependencies:
   english_words: ^4.0.0
   provider: ^6.0.0
   app_settings: 4.2.0    # plugin for opening iOS and Android phone settings from an app
+  shared_preferences: 2.1.2   # plugin that wraps platform-specific persistent storage for simple data (not reliable!!!)
 
 
   # The following adds the Cupertino Icons font to your application.
