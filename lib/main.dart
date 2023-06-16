@@ -297,14 +297,28 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ElevatedButton(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+              onPressed: (() {
+                AppSettings.openBluetoothSettings(callback: () {
+                  print("sample callback function called");
+                });
+              }),
+              child: Text('Open Bluetooth Settings'),
+            ),
+          SizedBox(height: 28,),
+          ElevatedButton(
             onPressed: (() {
-              AppSettings.openBluetoothSettings(callback: () {
+              AppSettings.openWIFISettings(callback: () {
                 print("sample callback function called");
               });
             }),
-            child: Text('Open Bluetooth Settings'),
+            child: Text('Open Wi-Fi Settings'),
           ),
+        ]
+      ),
     );
   }
 }
