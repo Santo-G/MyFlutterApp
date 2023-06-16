@@ -90,6 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
         page = SettingsPage();
         break;
       case 5:
+        page = CustomForm();
+        break;
+      case 6:
         page = Placeholder(color: Colors.white,);   // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
         break;
       default:
@@ -124,6 +127,10 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
                     NavigationRailDestination(
                       icon: Icon(Icons.settings),
                       label: Text('Settings'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.app_registration),
+                      label: Text('Form'),
                     ),
                   ],
                   selectedIndex: selectedIndex,   // default destination index selected at startup
@@ -318,6 +325,58 @@ class SettingsPage extends StatelessWidget {
             child: Text('Open Wi-Fi Settings'),
           ),
         ]
+      ),
+    );
+  }
+}
+
+
+// Define a corresponding State class.
+// This class holds data related to the form.
+class CustomForm extends StatelessWidget {
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a `GlobalKey<FormState>`,
+  // not a GlobalKey<MyCustomFormState>.
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    // Build a Form widget using the _formKey created above.
+    return Center(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextFormField(
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKey.currentState!.validate()) {
+                    // If the form is valid, display a snackbar. In the real world,
+                    // you'd often call a server or save the information in a database.
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Processing Data')),
+                    );
+                  }
+                },
+                child: const Text('Submit'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
