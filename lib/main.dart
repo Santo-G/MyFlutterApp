@@ -1,8 +1,12 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+
+Position? _position;
 
 // ----  MAIN  ---- //
 void main() {
@@ -64,6 +68,12 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void getCurrentLocation() async {
+    Position position = await _determinePosition();
+    _position = position;
+    notifyListeners();
+  }
+
 }
 
 Future<String> getStringValuesSF(key) async {
@@ -111,6 +121,9 @@ class _MyHomePageState extends State<MyHomePage> {
         page = ShPreferences();
         break;
       case 7:
+        page = Map();
+        break;
+      case 8:
         page = Placeholder(
           color: Colors.white,
         ); // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
@@ -158,6 +171,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   NavigationRailDestination(
                     icon: Icon(Icons.save),
                     label: Text('Preferences'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.map),
+                    label: Text('Map'),
                   ),
                 ],
                 selectedIndex: selectedIndex,
@@ -461,6 +478,52 @@ class ShPreferences extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+
+Future<Position> _determinePosition() async {
+  LocationPermission permission;
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) {
+      // Permissions are denied, next time you could try
+      // requesting permissions again (this is also where
+      // Android's shouldShowRequestPermissionRationale
+      // returned true. According to Android guidelines
+      // your App should show an explanatory UI now.
+      return Future.error('Location permissions are denied');
+    }
+  }
+  if (permission == LocationPermission.deniedForever) {
+    // Permissions are denied forever, handle appropriately.
+    return Future.error(
+        'Location permissions are permanently denied, we cannot request permissions.');
+  }
+// When we reach here, permissions are granted and we can
+  // continue accessing the position of the device.
+  return await Geolocator.getCurrentPosition();
+}
+
+class Map extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Geolocation Example'),
+        ),
+        body: Center(
+          child: _position != null ? Text('Current Location: \n' + _position.toString()): Text('No location data'),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () { appState.getCurrentLocation(); },
+          tooltip: 'Increment',
+          child: Icon(Icons.add),
+        )
     );
   }
 }
