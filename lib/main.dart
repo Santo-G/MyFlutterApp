@@ -2,6 +2,7 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app_settings/app_settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ----  MAIN  ---- //
 void main() {
@@ -45,7 +46,7 @@ class MyAppState extends ChangeNotifier {
     notifyListeners(); // a method of ChangeNotifier that ensures that anyone watching MyAppState is notified
   }
 
-  var favorites = <WordPair>[];   // empty list
+  var favorites = <WordPair>[]; // empty list
 
   void toggleFavorite() {
     if (favorites.contains(current)) {
@@ -55,23 +56,37 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  // saving string value into shared preferences
+  addStringToSF(key, value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(key, value);
+    notifyListeners();
+  }
+
 }
 
+Future<String> getStringValuesSF(key) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  //Return String
+  String stringValue = prefs.getString(key)!;
+  return stringValue;
+}
 
-class MyHomePage extends StatefulWidget {   // StatefulWidget contains a mutable state of his own (it can change itself)
+class MyHomePage extends StatefulWidget {
+  // StatefulWidget contains a mutable state of his own (it can change itself)
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-
-class _MyHomePageState extends State<MyHomePage> {  // this class can manage its own values (underscore (_) at the start of _MyHomePageState makes that class private)
+class _MyHomePageState extends State<MyHomePage> {
+  // this class can manage its own values (underscore (_) at the start of _MyHomePageState makes that class private)
 
   var selectedIndex = 0;
 
   // Every widget defines a build() method that's automatically called
   @override
   Widget build(BuildContext context) {
-
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -93,69 +108,82 @@ class _MyHomePageState extends State<MyHomePage> {  // this class can manage its
         page = CustomForm();
         break;
       case 6:
-        page = Placeholder(color: Colors.white,);   // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
+        page = ShPreferences();
+        break;
+      case 7:
+        page = Placeholder(
+          color: Colors.white,
+        ); // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
         break;
       default:
-        throw UnimplementedError('no widget for $selectedIndex');   // throw an error (fail-fast principle)
+        throw UnimplementedError(
+            'no widget for $selectedIndex'); // throw an error (fail-fast principle)
     }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {   // builder callback is called every time the constraints change (resize, rotate etc)
-        return Scaffold(
-          body: Row(
-            children: [
-              SafeArea(   // ensures that its child is not obscured by a hardware notch or a status bar
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,  // shows the labels next to the icons - responds to its environment changes
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.android),
-                      label: Text('Android'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.apple),
-                      label: Text('Apple'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.settings),
-                      label: Text('Settings'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.app_registration),
-                      label: Text('Form'),
-                    ),
-                  ],
-                  selectedIndex: selectedIndex,   // default destination index selected at startup
-                  onDestinationSelected: (value) {    // defines what happens when the user selects one of the destinations (similar to notifyListeners()-  makes sure that the UI updates)
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
-                ),
+    return LayoutBuilder(builder: (context, constraints) {
+      // builder callback is called every time the constraints change (resize, rotate etc)
+      return Scaffold(
+        body: Row(
+          children: [
+            SafeArea(
+              // ensures that its child is not obscured by a hardware notch or a status bar
+              child: NavigationRail(
+                extended: constraints.maxWidth >= 600,
+                // shows the labels next to the icons - responds to its environment changes
+                destinations: [
+                  NavigationRailDestination(
+                    icon: Icon(Icons.home),
+                    label: Text('Home'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.favorite),
+                    label: Text('Favorites'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.android),
+                    label: Text('Android'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.apple),
+                    label: Text('Apple'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.settings),
+                    label: Text('Settings'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.app_registration),
+                    label: Text('Form'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.save),
+                    label: Text('Preferences'),
+                  ),
+                ],
+                selectedIndex: selectedIndex,
+                // default destination index selected at startup
+                onDestinationSelected: (value) {
+                  // defines what happens when the user selects one of the destinations (similar to notifyListeners()-  makes sure that the UI updates)
+                  setState(() {
+                    selectedIndex = value;
+                  });
+                },
               ),
-              Expanded(   // useful in rows and columns—they let you express layouts where some children take only as much space as they need
-                child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  // child: GeneratorPage(),
-                  child: page,
-                ),
+            ),
+            Expanded(
+              // useful in rows and columns—they let you express layouts where some children take only as much space as they need
+              child: Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                // child: GeneratorPage(),
+                child: page,
               ),
-            ],
-          ),
-        );
-      }
-    );
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
-
 
 class GeneratorPage extends StatelessWidget {
   @override
@@ -176,24 +204,24 @@ class GeneratorPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           BigCard(pair: pair),
-          SizedBox(height: 10),   // takes space and doesn't render anything by itself. It's commonly used to create visual "gaps"
+          SizedBox(height: 10),
+          // takes space and doesn't render anything by itself. It's commonly used to create visual "gaps"
           Row(
-            mainAxisSize: MainAxisSize.min,   // tells Row not to take all available horizontal space
+            mainAxisSize: MainAxisSize.min,
+            // tells Row not to take all available horizontal space
             children: [
               ElevatedButton.icon(
                   onPressed: () {
                     appState.toggleFavorite();
                   },
                   icon: Icon(icon),
-                  label: Text('Like')
-              ),
+                  label: Text('Like')),
               SizedBox(width: 18),
               ElevatedButton(
                   onPressed: () {
                     appState.getNext();
                   },
-                  child: Text('Next')
-              ),
+                  child: Text('Next')),
             ],
           )
         ],
@@ -201,7 +229,6 @@ class GeneratorPage extends StatelessWidget {
     );
   }
 }
-
 
 // Having separate widgets for separate logical parts of your UI is an important way
 // of managing complexity in Flutter
@@ -248,9 +275,7 @@ class BigCard extends StatelessWidget {
   }
 }
 
-
 class FavoritesPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context, ) {
     var appState = context.watch<MyAppState>();
@@ -279,7 +304,6 @@ class FavoritesPage extends StatelessWidget {
   }
 }
 
-
 class AndroidPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -288,7 +312,6 @@ class AndroidPage extends StatelessWidget {
     );
   }
 }
-
 
 class ApplePage extends StatelessWidget {
   @override
@@ -299,37 +322,34 @@ class ApplePage extends StatelessWidget {
   }
 }
 
-
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-              onPressed: (() {
-                AppSettings.openBluetoothSettings(callback: () {
-                  print("sample callback function called");
-                });
-              }),
-              child: Text('Open Bluetooth Settings'),
-            ),
-          SizedBox(height: 28,),
-          ElevatedButton(
-            onPressed: (() {
-              AppSettings.openWIFISettings(callback: () {
-                print("sample callback function called");
-              });
-            }),
-            child: Text('Open Wi-Fi Settings'),
-          ),
-        ]
-      ),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        ElevatedButton(
+          onPressed: (() {
+            AppSettings.openBluetoothSettings(callback: () {
+              print("sample callback function called");
+            });
+          }),
+          child: Text('Open Bluetooth Settings'),
+        ),
+        SizedBox(
+          height: 28,
+        ),
+        ElevatedButton(
+          onPressed: (() {
+            AppSettings.openWIFISettings(callback: () {
+              print("sample callback function called");
+            });
+          }),
+          child: Text('Open Wi-Fi Settings'),
+        ),
+      ]),
     );
   }
 }
-
 
 // Define a corresponding State class.
 // This class holds data related to the form.
@@ -382,4 +402,65 @@ class CustomForm extends StatelessWidget {
   }
 }
 
+class ShPreferences extends StatelessWidget {
 
+  late String currentInput;
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    var counter = 0;
+    var appState = context.watch<MyAppState>();
+    // Create a text controller and use it to retrieve the current value
+    // of the TextField.
+    final myController = TextEditingController();
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TextField(
+          controller: myController,
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                currentInput = myController.text;
+                appState.addStringToSF('0', currentInput);
+                currentInput = "";
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('String added!')),
+                );
+              },
+              child: const Text('Save'),
+            ),
+            SizedBox(
+              width: 20,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                var tmpInput = await getStringValuesSF('0');  // using "await" to wait for the result requested
+                currentInput = myController.text;
+                if (currentInput == tmpInput) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('String found in SharedPreferences data!')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('String NOT found in SharedPreferences data!')),
+                  );
+                }
+              },
+              child: const Text('Check'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
