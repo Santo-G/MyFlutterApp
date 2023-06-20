@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../generated/l10n.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -62,7 +63,7 @@ class _LoginState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login"),
+        title: Text(S.current.loginTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -92,13 +93,13 @@ class _LoginState extends State<LoginPage> {
                     print(_email);
                     print(_password);
                   },
-                  child: const SizedBox(
+                  child: SizedBox(
                     width: 200,
                     height: 50,
                     child: Center(
                       child: Text(
-                        "Login",
-                        textScaleFactor: 1.5,
+                          S.current.loginButton,
+                          textScaleFactor: 1.5,
                       ),
                     ),
                   ),
