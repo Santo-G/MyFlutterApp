@@ -1,6 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:my_flutter_app/pages/login.dart';
 import 'package:provider/provider.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,6 +93,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // this class can manage its own values (underscore (_) at the start of _MyHomePageState makes that class private)
 
+  // initState() is a useful method to initialize state variables of the page
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   var selectedIndex = 0;
 
   // Every widget defines a build() method that's automatically called
@@ -124,6 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
         page = Map();
         break;
       case 8:
+        page = LoginPage();
+        break;
+      case 9:
         page = Placeholder(
           color: Colors.white,
         ); // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
@@ -175,6 +186,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   NavigationRailDestination(
                     icon: Icon(Icons.map),
                     label: Text('Map'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.login),
+                    label: Text('Login'),
                   ),
                 ],
                 selectedIndex: selectedIndex,
