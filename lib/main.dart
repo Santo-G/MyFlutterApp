@@ -5,6 +5,8 @@ import 'package:my_flutter_app/pages/login.dart';
 import 'package:provider/provider.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
 
 
 Position? _position;
@@ -32,6 +34,13 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         ),
+        localizationsDelegates: [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
         home: MyHomePage(), // home widget - starting point of the app !!!
       ),
     );
