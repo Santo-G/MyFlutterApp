@@ -7,6 +7,8 @@ import 'package:app_settings/app_settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 Position? _position;
@@ -144,6 +146,9 @@ class _MyHomePageState extends State<MyHomePage> {
         page = LoginPage();
         break;
       case 9:
+        page = APIFetch();
+        break;
+      case 10:
         page = Placeholder(
           color: Colors.white,
         ); // handy widget that draws a crossed rectangle wherever you place it, marking that part of the UI as unfinished
@@ -199,6 +204,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   NavigationRailDestination(
                     icon: Icon(Icons.login),
                     label: Text('Login'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.web),
+                    label: Text('WebApi'),
                   ),
                 ],
                 selectedIndex: selectedIndex,
@@ -449,8 +458,6 @@ class ShPreferences extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     var counter = 0;
     var appState = context.watch<MyAppState>();
     // Create a text controller and use it to retrieve the current value
@@ -549,5 +556,36 @@ class Map extends StatelessWidget {
           child: Icon(Icons.add),
         )
     );
+  }
+}
+
+
+class APIFetch extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Button to fetch data
+    return ElevatedButton(
+      onPressed: () {
+        fetchData();
+      },
+      child: const Text('Check')
+    );
+  }
+}
+
+Future<void> fetchData() async {
+  var url = Uri.parse('https://restcountries.com/v3.1/all'); // Country API endpoint
+
+  try {
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      // Handle the retrieved data here
+      print(jsonData);
+    } else {
+      print('Request failed with status: ${response.statusCode}.');
+    }
+  } catch (error) {
+    print('Error: $error');
   }
 }

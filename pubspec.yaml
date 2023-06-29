@@ -36,6 +36,7 @@ dependencies:
   app_settings: 4.2.0    # plugin for opening iOS and Android phone settings from an app
   shared_preferences: 2.1.2   # plugin that wraps platform-specific persistent storage for simple data (not reliable!!!)
   geolocator: ^9.0.2  # provide methods to access to the gallery and camera
+  http: ^1.1.0  # needed for making http requests
 
 
   # The following adds the Cupertino Icons font to your application.
